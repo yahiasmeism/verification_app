@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(const MyApp());
@@ -65,71 +66,82 @@ class _MyHomePageState extends State<MyHomePage> {
           width: 200,
           margin: const EdgeInsets.symmetric(vertical: 40),
           child: Column(
-            children: <Widget>[
-              Text('هل أنت روبوت؟',
-                  style: Theme.of(context).textTheme.bodyLarge),
+            children: [
+              Text(
+                'هل أنت روبوت؟',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
               const SizedBox(height: 30),
               const Text('ادخل الأجابة الصحيحة'),
               const SizedBox(height: 20),
-              Form(
-                child: Column(
-                  children: [
-                    TextFormField(
-                      decoration: InputDecoration(
-                        label: Center(child: Text(challenge.num1.toString())),
-                      ),
-                      enabled: false,
-                    ),
-                    const SizedBox(height: 15),
-                    Text(challenge.operator,
-                        style: Theme.of(context).textTheme.bodyLarge),
-                    const SizedBox(height: 15),
-                    TextFormField(
-                      decoration: InputDecoration(
-                          label: Center(
-                        child: Text(challenge.num2.toString()),
-                      )),
-                      enabled: false,
-                    ),
-                    const SizedBox(height: 15),
-                    Text('=', style: Theme.of(context).textTheme.bodyLarge),
-                    const SizedBox(height: 15),
-                    TextFormField(
-                      controller: inputController,
-                    ),
-                    const SizedBox(height: 30),
-                    OutlinedButton(
-                      onPressed: () => setState(() {
-                        int? inputAnswer = int.tryParse(inputController.text);
-                        if (inputAnswer != null) {
-                          isCorrectAnswer = challenge.checkAnswer(inputAnswer);
-                          inputController.clear();
-                          challenge = MathChallenge.generateChallenge();
-                        } else {
-                          isCorrectAnswer = null;
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              duration: Duration(milliseconds: 1500),
-                              content: Directionality(
-                                textDirection: TextDirection.rtl,
-                                child: Text('قيمة غير صالحة'),
+              TextField(
+                decoration: InputDecoration(
+                  label: Center(child: Text(challenge.num1.toString())),
+                ),
+                enabled: false,
+              ),
+              const SizedBox(height: 15),
+              Text(
+                challenge.operator,
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                decoration: InputDecoration(
+                  label: Center(
+                    child: Text(challenge.num2.toString()),
+                  ),
+                ),
+                enabled: false,
+              ),
+              const SizedBox(height: 15),
+              Text(
+                '=',
+                style: Theme.of(context).textTheme.bodyLarge,
+              ),
+              const SizedBox(height: 15),
+              TextField(
+                controller: inputController,
+              ),
+              const SizedBox(height: 30),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => setState(
+                        () {
+                          int? inputAnswer = int.tryParse(inputController.text);
+                          if (inputAnswer != null) {
+                            isCorrectAnswer =
+                                challenge.checkAnswer(inputAnswer);
+                            inputController.clear();
+                            challenge = MathChallenge.generateChallenge();
+                          } else {
+                            isCorrectAnswer = null;
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                duration: Duration(milliseconds: 1500),
+                                content: Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: Text('قيمة غير صالحة'),
+                                ),
                               ),
-                            ),
-                          );
-                        }
-                      }),
-                      style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(horizontal: 80)),
+                            );
+                          }
+                        },
+                      ),
                       child: const Text('أدخل'),
                     ),
-                    const SizedBox(height: 10),
-                    IconButton(
-                        onPressed: () => setState(() {
-                              challenge = MathChallenge.generateChallenge();
-                            }),
-                        icon: const Icon(Icons.refresh))
-                  ],
-                ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              IconButton(
+                onPressed: () => setState(() {
+                  isCorrectAnswer = null;
+                  challenge = MathChallenge.generateChallenge();
+                }),
+                icon: const Icon(Icons.refresh),
               ),
               const SizedBox(height: 30),
               AnswerImageBuilder(answer: isCorrectAnswer)
