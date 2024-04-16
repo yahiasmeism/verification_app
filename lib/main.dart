@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 
 void main() {
   runApp(const MyApp());
@@ -54,6 +53,7 @@ class _MyHomePageState extends State<MyHomePage> {
   late MathChallenge challenge;
   @override
   void initState() {
+    // Initialize the random challenge value
     challenge = MathChallenge.generateChallenge();
     super.initState();
   }
@@ -110,14 +110,24 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: OutlinedButton(
                       onPressed: () => setState(
                         () {
+                          // extract number from inputFeild
                           int? inputAnswer = int.tryParse(inputController.text);
+
+                          // Check the value if it is not null (valid)
                           if (inputAnswer != null) {
+                            // Get the answer result
                             isCorrectAnswer =
                                 challenge.checkAnswer(inputAnswer);
+
+                            // Empty the input field
                             inputController.clear();
+
+                            // update the numbers
                             challenge = MathChallenge.generateChallenge();
                           } else {
                             isCorrectAnswer = null;
+
+                            // If the data is invalid, show the snack bar
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
                                 duration: Duration(milliseconds: 1500),
@@ -129,7 +139,7 @@ class _MyHomePageState extends State<MyHomePage> {
                             );
                           }
                         },
-                      ),
+                      ), //setState
                       child: const Text('أدخل'),
                     ),
                   ),
@@ -139,6 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
               IconButton(
                 onPressed: () => setState(() {
                   isCorrectAnswer = null;
+                  // If you click Refresh, we update the numbers
                   challenge = MathChallenge.generateChallenge();
                 }),
                 icon: const Icon(Icons.refresh),
@@ -164,7 +175,7 @@ class MathChallenge {
     required this.num2,
     required this.operator,
   });
-
+  // calculate the correct result of the math challenge
   int calculate() {
     switch (operator) {
       case '+':
@@ -173,11 +184,13 @@ class MathChallenge {
         return num1 - num2;
       case 'x':
         return num1 * num2;
+      // Return default value zero if no valid arithmetic operation is found
       default:
         return 0;
     }
   }
 
+  // Generate a random math challenge
   factory MathChallenge.generateChallenge() {
     final random = Random();
     int num1 = random.nextInt(10) + 1;
@@ -190,6 +203,7 @@ class MathChallenge {
     );
   }
 
+  // Check if the given answer is correct
   bool? checkAnswer(int? answer) {
     int correctAnswer = calculate();
     if (answer != null) {
@@ -203,14 +217,16 @@ class MathChallenge {
   }
 }
 
+/// Enter an answer to a random math challenge and verify the answer.
+/// If the answer is correct, a correct image appears, otherwise an incorrect image appears
 class AnswerImageBuilder extends StatelessWidget {
   const AnswerImageBuilder({super.key, this.answer});
   final bool? answer;
   @override
   Widget build(BuildContext context) {
-    String correctImagePath =
+    const String correctImagePath =
         'https://img.freepik.com/premium-vector/green-correct-sign-vector-icon_547110-401.jpg';
-    String wrongImagePath =
+    const String wrongImagePath =
         'https://cdn-icons-png.freepik.com/256/14025/14025328.png';
     if (answer != null) {
       return SizedBox(
